@@ -40,3 +40,6 @@ npm run parallel
 - Total time ≈ the slowest reviewer plus the aggregator, not the sum of all three.
 - Structured output made aggregation trivial. Averaging free-text reviews would need another parsing step.
 - Reviewers sometimes flag the same issue from different angles. The aggregator removes the duplicates.
+
+## Result from the logged run
+Reviewers finished at +3.3s (technical), +4.5s (ATS), and +6.0s (grammar). Total wall-clock time was 6.0s instead of ~13.8s one after another. Each scored 7/10, and the aggregator produced a verdict with 3 prioritized fixes. One structured-output retry occurred (logged as `[retry]`). See [the log](../logs/parallelization.log).

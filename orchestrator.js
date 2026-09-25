@@ -13,8 +13,8 @@ const planSchema = z.object({
     subtasks: z
         .array(
             z.object({
-                title: z.string(),
-                instructions: z.string()
+                title: z.string().describe("Short name of the subtask"),
+                instructions: z.string().describe("What the specialist worker should do")
             })
         )
         .min(2)
@@ -29,7 +29,9 @@ async function run() {
     step("ORCHESTRATOR: plan subtasks");
     const plan = await askObject(
         `Break this request into 2-5 independent analysis subtasks that ` +
-        `different specialists could work on in parallel.\n\nRequest: ${REQUEST}`,
+        `different specialists could work on in parallel. Return JSON with a ` +
+        `"subtasks" array where each item has exactly two string fields: ` +
+        `"title" and "instructions".\n\nRequest: ${REQUEST}`,
         planSchema,
         "You are a lead research analyst who plans work for a team."
     );

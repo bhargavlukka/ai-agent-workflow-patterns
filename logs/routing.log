@@ -1,0 +1,113 @@
+# routing.js | run 2026-09-25 11:45:07 PDT | node v24.18.0
+
+======================================================================
+ROUTING: LLM classifier -> specialized agent
+======================================================================
+
+--- INPUT: "How do SQL joins work?" ---
+Router -> coding (confidence 0.99): The question asks about how SQL joins work, which is a programming/database concept, thus falls under the 'coding' category.
+
+[coding agent]
+**Brief explanation**
+
+SQL joins combine rows from two (or more) tables based on a related column.  
+- **INNER JOIN** – keeps only rows where the join condition matches in *both* tables.  
+- **LEFT (OUTER) JOIN** – keeps all rows from the left table; rows with no match get `NULL` for the right‑table columns.  
+- **RIGHT (OUTER) JOIN** – opposite of LEFT; keeps all rows from the right table.  
+- **FULL (OUTER) JOIN** – keeps rows from **both** sides, filling missing parts with `NULL`.  
+- **CROSS JOIN** – returns the Cartesian product (every row of one table paired with every row of the other).
+
+**Simple example**
+
+Suppose we have two tables:
+
+```sql
+-- Employees
+CREATE TABLE employees (
+    emp_id   INT PRIMARY KEY,
+    name     VARCHAR(50),
+    dept_id  INT
+);
+
+INSERT INTO employees VALUES
+(1,'Alice',10),(2,'Bob',20),(3,'Carol',NULL);
+
+-- Departments
+CREATE TABLE departments (
+    dept_id   INT PRIMARY KEY,
+    dept_name VARCHAR(50)
+);
+
+INSERT INTO departments VALUES
+(10,'Sales'),(20,'Engineering'),(30,'HR');
+```
+
+*Inner join* (only matching departments):
+
+```sql
+SELECT e.emp_id, e.name, d.dept_name
+FROM   employees e
+INNER JOIN departments d
+        ON e.dept_id = d.dept_id;
+```
+
+Result:
+
+| emp_id | name  | dept_name   |
+|--------|-------|------------|
+| 1      | Alice | Sales      |
+| 2      | Bob   | Engineering|
+
+*Left join* (all employees, even if they lack a department):
+
+```sql
+SELECT e.emp_id, e.name, d.dept_name
+FROM   employees e
+LEFT JOIN departments d
+        ON e.dept_id = d.dept_id;
+```
+
+Result:
+
+| emp_id | name  | dept_name   |
+|--------|-------|------------|
+| 1      | Alice | Sales      |
+| 2      | Bob   | Engineering|
+| 3      | Carol | NULL       |
+
+The same pattern works for RIGHT/FULL joins; just swap the tables or use `FULL OUTER JOIN`. This is the core idea behind SQL joins.
+
+--- INPUT: "I was charged twice for my subscription this month, what should I do?" ---
+Router -> billing (confidence 0.99): The user is asking about being charged twice for a subscription, which pertains to billing issues.
+
+[billing agent]
+I’m sorry you’ve been double‑charged. Please follow these steps so we can correct it quickly:
+
+1. **Gather the details**  
+   • Your account email or user ID  
+   • The date(s) and amount of the two charges (you can find them on your bank/credit‑card statement)  
+   • A screenshot or PDF of the statement showing both charges (optional but helpful)
+
+2. **Reply to this message** with the information above.  
+
+3. **What we’ll do**  
+   • Verify the duplicate transaction in our system.  
+   • Issue a full refund for the extra charge (refunds are processed within 3–5 business days).  
+   • Confirm that your subscription remains active with the correct billing date.
+
+If you need the refund urgently or have any other concerns, let us know in your reply. Thank you for your patience!
+
+--- INPUT: "What are some good habits for staying productive while working from home?" ---
+Router -> general (confidence 0.99): The question asks about productivity habits while working from home, which is unrelated to programming (coding) or payment issues (billing), thus it falls under the general category.
+
+[general agent]
+- **Set a consistent schedule** – start and finish work at the same times each day, and include regular breaks (e.g., the Pomodoro technique).  
+- **Create a dedicated workspace** – a separate desk or corner with minimal distractions signals to your brain that it’s “work mode.”  
+- **Plan your day in advance** – write a short to‑do list or time‑block tasks the night before so you know exactly what to tackle.  
+- **Limit digital interruptions** – mute non‑essential notifications, use website blockers for social media, and check email at set intervals.  
+- **Take movement breaks** – stretch, walk, or do a quick workout every hour to keep energy and focus up.  
+- **Dress for work** – changing out of pajamas signals professionalism and helps maintain a productive mindset.  
+- **Set boundaries with others** – communicate your work hours to family or housemates and use signals (e.g., a closed door) when you need focus.  
+- **End the day with a wrap‑up** – review what you accomplished, note unfinished tasks for tomorrow, and log off completely to maintain work‑life balance.
+
+[run stats] model=gpt-oss:120b llm_calls=6 input_tokens=785 output_tokens=1494 elapsed=9.7s

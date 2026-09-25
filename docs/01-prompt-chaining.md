@@ -43,3 +43,6 @@ npm run chaining
 - Each step's prompt is small and focused, so outputs stay on-topic.
 - Errors compound: a weak outline produces a weak article. The gate catches structural problems (a missing point) but not quality problems. That needs the evaluator-optimizer pattern.
 - Latency is the sum of all steps because nothing runs in parallel.
+
+## Result from the logged run
+Outline gate passed (3 points), article gate passed (296 words, so no expand call was needed), 2-sentence summary produced. 3 LLM calls, 6.4s. See [the log](../logs/prompt-chaining.log).

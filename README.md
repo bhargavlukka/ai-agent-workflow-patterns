@@ -12,7 +12,20 @@ Module 1 Lab: **Build Five Agent Workflow Patterns**. Implementations of the fiv
 
 Reflection: [REFLECTION.md](REFLECTION.md)
 
-> **Execution logs:** being captured from a live run with the updated code. Until then the log links above return 404. See [logs/README.md](logs/README.md) for how to generate them.
+## Execution results (live run, 2026-09-25)
+All five patterns were run end-to-end. The full console output is in [`logs/`](logs/).
+
+| Pattern | LLM calls | Elapsed | What the log shows |
+|---|---|---|---|
+| Prompt Chaining | 3 | 6.4s | Both gates passed (3 outline points, 296-word article) |
+| Routing | 6 | 9.7s | 3 questions routed to `coding`, `billing`, and `general`, each with the router's reasoning |
+| Parallelization | 5 | 10.7s | 3 reviewers finished at +3.3s / +4.5s / +6.0s, so they overlapped; average score 7.0/10 plus aggregated verdict |
+| Orchestrator-Workers | 8 | 26.8s | Orchestrator planned 5 subtasks, 5 workers ran in parallel, synthesizer produced the briefing |
+| Evaluator-Optimizer | 4 | 15.4s | Draft scored **2/10 → 10/10**, accepted on iteration 2 |
+
+**Model used for the logs:** `gpt-oss:120b`, served through the SharedLLM gateway using the Anthropic-compatible endpoint (`LLM_PROVIDER=anthropic`). My original OpenAI key had been revoked, and the gateway account has no Claude balance (`claude-sonnet-5` returned `Payment Required`). The pattern code is provider-independent: set `LLM_PROVIDER=openai` to run the same scripts on `gpt-4.1-mini`.
+
+LLM call counts include structured-output retries (see `[retry]` lines in the logs and the note in [REFLECTION.md](REFLECTION.md)).
 
 ## Project structure
 ```
@@ -45,7 +58,7 @@ npm run check             # one test call to confirm the key works
 | `LLM_PROVIDER` | Required variables | Default model |
 |---|---|---|
 | `openai` | `OPENAI_API_KEY` | `gpt-4.1-mini` (`OPENAI_MODEL`) |
-| `anthropic` | `ANTHROPIC_API_KEY`, optional `ANTHROPIC_BASE_URL` + `ANTHROPIC_EXTRA_HEADERS` for a gateway such as SharedLLM | `claude-sonnet-5` (`ANTHROPIC_MODEL`) |
+| `anthropic` | `ANTHROPIC_API_KEY`, optional `ANTHROPIC_BASE_URL` + `ANTHROPIC_EXTRA_HEADERS` for a gateway such as SharedLLM | `claude-sonnet-5` (`ANTHROPIC_MODEL`; logs used `gpt-oss:120b`) |
 
 If a required key is missing, the scripts exit with a clear message instead of a stack trace.
 

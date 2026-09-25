@@ -39,3 +39,6 @@ npm run evaluator
 - The score going up across iterations in the log is the evidence that the loop works.
 - Explicit criteria matter. Without them the evaluator gives generic feedback.
 - The evaluator is an LLM too, so it can be lenient. The hard iteration cap stops the loop from running forever and caps cost.
+
+## Result from the logged run
+Iteration 1: the weak draft scored **2/10** (`passes=false`) with specific feedback on hype, jargon, and the missing example. After one revision, iteration 2 scored **10/10** and was accepted, so the loop stopped early instead of using all 3 iterations. 4 LLM calls, 15.4s. See [the log](../logs/evaluator.log).

@@ -39,3 +39,6 @@ npm run routing
 - Logging the router's reasoning makes misroutes easy to debug.
 - Routing adds one extra LLM call per request, which is the cost of specialization.
 - A low `confidence` value could trigger a fallback to the general agent or a human. That's a natural next step.
+
+## Result from the logged run
+All three questions were routed correctly: SQL joins → `coding`, double charge → `billing`, work-from-home habits → `general`, each with confidence 0.99. 6 LLM calls (3 router + 3 specialist), 9.7s. See [the log](../logs/routing.log).

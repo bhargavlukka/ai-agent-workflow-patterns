@@ -40,3 +40,8 @@ npm run orchestrator
 - The plan changes between runs and requests. That flexibility is the point, but it also makes this pattern less predictable than a fixed workflow.
 - Bounding the plan (`min(2).max(5)`) keeps cost and latency under control.
 - The workers aren't given live data, so figures in the briefing come from the model's training data and aren't current. A real system would give workers tools (search, a market-data API).
+
+## Result from the logged run
+The orchestrator planned 5 subtasks (company overview, financial performance, competitive landscape, risks & opportunities, investment summary). 5 workers ran in parallel, and the synthesizer produced a briefing with a one-line takeaway. 8 LLM calls, 26.8s.
+
+**Issue found while running:** `gpt-oss:120b` first returned plans with its own field names (`description`, `id`, `specialist`) instead of the schema's `title`/`instructions`, so validation failed. Fixed by naming the exact fields in the prompt, adding `.describe()` to the schema, and adding a bounded retry in `askObject()`. See [the log](../logs/orchestrator.log).
