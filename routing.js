@@ -1,43 +1,57 @@
-import { generateText } from "ai";
-import { openai } from "@ai-sdk/openai";
-import dotenv from "dotenv";
+// Pattern 2: Routing
+// An LLM classifies each input, then the input is sent to a specialized
+// handler (its own system prompt) for that category. This replaces the
+// earlier keyword check, which missed questions like "How do I reverse a
+// linked list?" that contain neither "SQL" nor "Python".
 
-dotenv.config();
+import { z } from "zod";
+import { ask, askObject, header, step, printUsage } from "./lib/llm.js";
 
-async function ask(prompt) {
-    const { text } = await generateText({
-        model: openai("gpt-4.1-mini"),
-        prompt
-    });
+const ROUTES = {
+    coding: "You are a senior software engineer. Answer with a short explanation and a small code example.",
+    billing: "You are a polite billing support agent. Be concise and list clear next steps for the customer.",
+    general: "You are a helpful general assistant. Answer clearly in a few sentences."
+};
 
-    return text;
+const classificationSchema = z.object({
+    category: z.enum(["coding", "billing", "general"]),
+    confidence: z.number().min(0).max(1),
+    reasoning: z.string()
+});
+
+const QUESTIONS = [
+    "How do SQL joins work?",
+    "I was charged twice for my subscription this month, what should I do?",
+    "What are some good habits for staying productive while working from home?"
+];
+
+async function route(question) {
+    step(`INPUT: "${question}"`);
+
+    const decision = await askObject(
+        `Classify this user question into one category: coding, billing, or general.\n\nQuestion: ${question}`,
+        classificationSchema
+    );
+    console.log(
+        `Router -> ${decision.category} (confidence ${decision.confidence}): ${decision.reasoning}`
+    );
+
+    const answer = await ask(question, ROUTES[decision.category]);
+    console.log(`\n[${decision.category} agent]\n${answer}`);
 }
 
 async function run() {
+    const startedAt = Date.now();
+    header("ROUTING: LLM classifier -> specialized agent");
 
-    const question = "How do SQL joins work?";
-
-    if (
-        question.includes("SQL") ||
-        question.includes("Python")
-    ) {
-
-        console.log("Routing to Coding Agent");
-
-        const answer = await ask(
-            `Answer this coding question: ${question}`
-        );
-
-        console.log(answer);
-
-    } else {
-
-        console.log("Routing to General Agent");
-
-        const answer = await ask(question);
-
-        console.log(answer);
+    for (const question of QUESTIONS) {
+        await route(question);
     }
+
+    printUsage(startedAt);
 }
 
-run();
+run().catch(err => {
+    console.error("Run failed:", err.message);
+    process.exitCode = 1;
+});

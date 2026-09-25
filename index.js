@@ -1,16 +1,13 @@
-import { generateText } from "ai";
-import { openai } from "@ai-sdk/openai";
-import dotenv from "dotenv";
+// Setup check: confirms the API key and model work before running the patterns.
 
-dotenv.config();
+import { ask, MODEL } from "./lib/llm.js";
 
 async function run() {
-    const { text } = await generateText({
-        model: openai("gpt-4.1-mini"),
-        prompt: "Say hello to Bhargava"
-    });
-
-    console.log(text);
+    const text = await ask("Say hello to Bhargava");
+    console.log(`[${MODEL}] ${text}`);
 }
 
-run();
+run().catch(err => {
+    console.error("Run failed:", err.message);
+    process.exitCode = 1;
+});

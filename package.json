@@ -1,17 +1,28 @@
 {
-  "name": "ai-lab",
+  "name": "ai-agent-workflow-patterns",
   "version": "1.0.0",
+  "description": "Five agent workflow patterns (prompt chaining, routing, parallelization, orchestrator-workers, evaluator-optimizer) built with the Vercel AI SDK",
+  "type": "module",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "engines": {
+    "node": ">=20"
   },
-  "keywords": [],
-  "author": "",
+  "scripts": {
+    "check": "node index.js",
+    "chaining": "node prompt-chaining.js",
+    "routing": "node routing.js",
+    "parallel": "node parallelization.js",
+    "orchestrator": "node orchestrator.js",
+    "evaluator": "node evaluator.js",
+    "all": "node prompt-chaining.js && node routing.js && node parallelization.js && node orchestrator.js && node evaluator.js"
+  },
+  "author": "Bhargav Lukka",
   "license": "ISC",
-  "description": "",
   "dependencies": {
+    "@ai-sdk/anthropic": "^4.0.63",
     "@ai-sdk/openai": "^4.0.15",
     "ai": "^7.0.29",
-    "dotenv": "^17.4.2"
+    "dotenv": "^17.4.2",
+    "zod": "^4.4.3"
   }
 }
